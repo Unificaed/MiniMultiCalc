@@ -1,0 +1,151 @@
+<html>
+
+<body onload="MetodoAtual = document.getElementById('SelecioneMetodo'); TransicaoMetodo(MetodoAtual.options[MetodoAtual.selectedIndex].value)">
+<!-- evento onload->assim que a página é carregada totalmente; Colocado para que não dê bug de atualização de página! -->
+<script>
+    
+    var Numeros     = 1;
+    var Operadores  = 1;
+    var NumerosArray    = Array(1024);
+    var OperadorArray   = Array(1024);
+    
+    function textAdd(texto)
+    {
+        var Elemento = document.getElementById("textInput_");
+        var TextInputContem = Elemento.value;
+        
+        Elemento.value = TextInputContem + texto;
+        
+    }
+    
+    function SepararVar()
+    {
+        var Elemento = document.getElementById("textInput_");
+        var TextInputContem = Elemento.value;
+        var Elemento2 = document.getElementById("EspacoDisponivelVar");
+        
+        var numeroatual = "";
+        
+        for(i = 0; i < Elemento.value.length; i++)
+        {
+            if(isNaN(TextInputContem[i]) && TextInputContem[i] != ',') //isNan verifica se não é número
+            {
+                if(TextInputContem[i] == '+' || TextInputContem[i] == '-' || TextInputContem[i] == '*' || TextInputContem[i] == '/')
+                {
+                    NumerosArray[Numeros]=numeroatual;
+                    OperadorArray[Numeros]=TextInputContem[i];
+                    Elemento2.innerHTML += "<input type='hidden' name='N"+Numeros+"' value='" + NumerosArray[Numeros] + "' />";
+                    Elemento2.innerHTML += "<input type='hidden' name='OP"+Numeros+"' value='" + OperadorArray[Numeros] + "' />";
+                    Numeros++;
+                    numeroatual = "";
+                }
+                else
+                {
+                    alert("Caractere invalido: " + TextInputContem[i]);
+                    return false;
+                }
+            }
+            else
+            {
+                if(TextInputContem[i] == ',')
+                    numeroatual+= '.';
+                else
+                    numeroatual+= TextInputContem[i];
+            }
+        }
+        
+        if(numeroatual.length > 0)
+        {
+            NumerosArray[Numeros]=numeroatual;
+            Elemento2.innerHTML += "<input type='hidden' name='N"+Numeros+"' value='" + NumerosArray[Numeros] + "' />";
+            Numeros++;
+            numeroatual = "";    
+        }
+            
+        return true & location.reload(); //location.reload = recarregar a página | prevenir bugs 
+    }
+    
+    function TransicaoMetodo(metodo)
+    {
+        var Elemento = document.getElementById("FormAT");
+        Elemento.setAttribute("method", metodo);
+        
+        var Elemento2 = document.getElementById('FormAT2');
+        Elemento2.setAttribute("method", metodo);
+    }
+    
+    function RadicicaoCheck()
+    {
+        var texto1;
+        var texto2;
+        texto1 = document.getElementById("_nBase").value;
+        texto2 = document.getElementById("_nExp").value;
+        
+        if(texto1.length == 0 || texto2.length == 0)
+        {
+            alert('Campos vazios.');
+            return false;
+        }
+        
+        for(i = 0; i < texto1.length; i++)
+        {
+            if(isNaN(texto1[i]))
+            {
+                alert('Base invalida.');
+                return false;
+            }
+        }
+        
+        for(i = 0; i < texto2.length; i++)
+        {
+            if(isNaN(texto2[i]))
+            {
+                alert('Expoente invalido.');
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+</script>
+
+<form onsubmit="return SepararVar()" id="FormAT" target="_blank" action="http://localhost/Calculadora2.php" method="get"> 
+    <b style="font-size: 20px">Calculadora</b><br/>
+    
+<input type="text" id="textInput_" style="height:25px;width:152px;resize: none;" autocomplete="off"> <br/> 
+
+<!-- autocomplete off pra não dar problemas na atualização da página! -->
+    
+<input type="button" onclick="textAdd(value)" value="1" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="2" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="3" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="/" style="height:25px;width:35px"> <br/>
+
+<input type="button" onclick="textAdd(value)" value="4" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="5" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="6" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="*" style="height:25px;width:35px"> <br/>
+    
+<input type="button" onclick="textAdd(value)" value="7" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="8" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="9" style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="-" style="height:25px;width:35px"> <br/>
+    
+<input type="button" onclick="textAdd(value)" value="0" style="heigth:25px;width:74px"> <input type="button" onclick="textAdd(value)" value="," style="height:25px;width:35px"> <input type="button" onclick="textAdd(value)" value="+" style="height:25px;width:35px"> <br/>
+    <input type="submit" style="width:152px;" value="Calcular"> <br/>
+
+<input type="hidden" name="TIPO" value="1">
+    
+   
+<div id="EspacoDisponivelVar"></div>
+    
+</form>
+    
+<form onsubmit="return RadicicaoCheck()" action="http://localhost/Calculadora2.php" id= "FormAT2" target="_blank"> 
+    <br/>
+    <b style="font-size: 20px">Radia&#231&#227o</b> <br/>
+    Base: &#32&#32&#32&#32<input type="text" name="Number1" size="20" id="_nBase"  ><br/>
+    Expoente: <input type="text" style="width: 118px" name="Number2" id="_nExp" ><br/><input type="submit" style="width:188px;" value="Calcular">
+    <input type="hidden" name="TIPO" value="2">
+</form>
+    
+    <br/> Tipo m&#233todo: <select id="SelecioneMetodo" onchange="TransicaoMetodo(options[selectedIndex].value)">
+<option name="get" selected>GET</option>    
+<option name="post">POST</option>
+</select>
+    
+</body>
+
+</html>
